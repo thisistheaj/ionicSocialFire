@@ -1,0 +1,37 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>
+      Ionic Blank
+    </ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+  <ion-list>
+
+    <ion-item>
+      <ion-label floating>Email</ion-label>
+      <ion-input type="email" [(ngModel)]="user.email"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label floating>Password</ion-label>
+      <ion-input type="password" [(ngModel)]="user.password"></ion-input>
+    </ion-item>
+
+  </ion-list>
+  <button block ion-button (click)="signUpUser()">
+    Sign Up
+  </button>
+  <button block ion-button (click)="logInUser()">
+    Log In
+  </button>
+
+  <!--<button block ion-button (click)="goToUsersPage()">-->
+    <!--Go!-->
+  <!--</button>-->
+  <!--<button block ion-button (click)="pushUser()">-->
+    <!--Push-->
+  <!--</button>-->
+</ion-content>
+
