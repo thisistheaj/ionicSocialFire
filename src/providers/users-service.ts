@@ -17,10 +17,8 @@ export class UsersService {
   users: FirebaseListObservable<any[]>;
 
   constructor(public afDatabase: AngularFireDatabase) {
-    var promise = afDatabase.list('/users');
-    this.users = promise;
-    promise.subscribe(function (data) {
-      console.log(promise);
+    this.users = afDatabase.list('/users');
+    this.users.subscribe(function (data) {
       console.log(data)
     });
   }

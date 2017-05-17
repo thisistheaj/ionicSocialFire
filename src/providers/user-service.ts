@@ -1,9 +1,7 @@
 import {Injectable} from '@angular/core';
-import 'rxjs/add/operator/map';
-import {Observable} from 'rxjs';
 
 import {AngularFireAuth} from 'angularfire2/auth';
-import {AngularFireDatabase, FirebaseObjectObservable, FirebaseListObservable} from 'angularfire2/database';
+import {AngularFireDatabase, FirebaseObjectObservable} from 'angularfire2/database';
 
 import * as firebase from 'firebase/app';
 
@@ -18,17 +16,10 @@ import * as firebase from 'firebase/app';
 @Injectable()
 export class UserService {
 
-  private authState: Observable<firebase.User>;
-  private currentUser: firebase.User;
   private user: FirebaseObjectObservable<any>;
   private following: FirebaseObjectObservable<any>;
 
   constructor(public afAuth: AngularFireAuth, public afDatabase: AngularFireDatabase) {
-    this.authState = afAuth.authState;
-    afAuth.authState.subscribe((user: firebase.User) => {
-      console.log('Auth State Changed. Current User:');
-      console.log(user);
-    });
   }
 
   public logInUser(pass, email): firebase.Promise<any> {
@@ -43,6 +34,7 @@ export class UserService {
   public signUpUser(pass, email): firebase.Promise<any> {
     return this.afAuth.auth.createUserWithEmailAndPassword(email, pass).then(user => {
       this.bindUserValues(user);
+      this.pushUser(email,user.uid);
       return user;
     }).catch(error => {
       return firebase.Promise.reject(error);
@@ -57,8 +49,8 @@ export class UserService {
     });
   }
 
-  public pushUser(email, uid): firebase.Promise<any> {
-    return this.afDatabase.object('/users/' + this.currentUser.uid).update({
+  private pushUser(email, uid): firebase.Promise<any> {
+    return this.afDatabase.object('/users/' + uid).update({
       email: email,
       uid: uid,
       following: ['']
@@ -66,25 +58,20 @@ export class UserService {
       return user;
     }).catch(error => {
       return firebase.Promise.reject(error);
-    })
-  }
-
-  private bindUserValues(user) {
-    this.currentUser = user;
-    this.user = this.afDatabase.object('/users/' + this.currentUser.uid);
-    this.following = this.afDatabase.object('/users/' + this.currentUser.uid + "/following");
-  }
-
-  public getCurrentUser() {
-    return this.currentUser;
-  }
-
-  public getCurrentUserObject() {
-    return this.user;
+    });
   }
 
   public getFollowing() {
     return this.following;
+  }
+
+  private bindUserValues(user) {
+    this.user = this.afDatabase.object('/users/' + user.uid);
+    this.following = this.afDatabase.object('/users/' + user.uid + "/following");
+  }
+
+  public getCurrentUser() {
+    return this.user;
   }
 
 }

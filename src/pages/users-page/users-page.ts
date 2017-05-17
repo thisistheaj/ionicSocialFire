@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage } from 'ionic-angular';
 
 import { UsersService } from '../../providers/users-service';
 import { UserService } from '../../providers/user-service';
-import { FirebaseListObservable } from 'angularfire2/database'
+import { FirebaseListObservable, FirebaseObjectObservable } from 'angularfire2/database'
 
 /**
  * Generated class for the UsersPage page.
@@ -18,16 +18,14 @@ import { FirebaseListObservable } from 'angularfire2/database'
 })
 export class UsersPage {
 
-  public users: FirebaseListObservable<any[]>
-  public currentuser: any;
-  public user: any;
+  public users: FirebaseListObservable<any[]>;
+  public user: FirebaseObjectObservable<any>;
   public following: any;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public Users: UsersService, public User: UserService) {
-    this.users = Users.getUsers();
-    this.currentuser = User.getCurrentUser();
-    this.user = User.getCurrentUserObject();
-    this.following = User.getFollowing();
+  constructor(public usersService: UsersService, public userService: UserService) {
+    this.users = usersService.getUsers();
+    this.user = userService.getCurrentUser();
+    this.following = userService.getFollowing();
   }
 
   public ionViewDidLoad() {
@@ -39,5 +37,6 @@ export class UsersPage {
     obj[u.uid] = val;
     this.following.update(obj);
   }
+
 
 }
